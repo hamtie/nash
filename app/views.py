@@ -16,6 +16,7 @@ import uuid
 from app.init_app import app, db
 from app.models import UserProfileForm, FriendForm, Graph, User, Friendship
 from app.images import process_profile_picture
+from app.helper import Helper
 
 # The Home page is accessible to anyone
 @app.route('/home')
@@ -90,6 +91,18 @@ def save_graph():
     print pickle.loads(str(graph.nodes))
 
     return jsonify(result="success")
+
+
+@app.route('/_helper_interaction', methods=['POST'])
+@login_required
+def helper_interaction():
+    data = json.loads(request.data)
+    if hasattr(Helper, data['helper_state']):
+        new_data = getattr(Helper, data['helper_state'])(data)
+    else:
+        new_data = Helper.default(data)
+    return json.dumps(new_data)
+
 
 @app.route('/_share_graph', methods=['POST'])
 @login_required  # Limits access to authenticated users

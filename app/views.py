@@ -208,7 +208,7 @@ def save_graph():
                                                  graph_diff_url=graph_diff_url)
             mail.send(msg_to_helper)
 
-    return jsonify(result="success")
+    return json.dump(result="success")
 
 @app.route('/_share_graph', methods=['POST'])
 @login_required  # Limits access to authenticated users
@@ -264,6 +264,33 @@ def friends_page():
     form = FriendForm(request.form)
     return render_template('pages/friends_page.html',
                            friendships=current_user.friendships, form=form, incoming_invites=unique_invites)
+
+@app.route('/_friends', methods=['GET'])
+@login_required
+def get_friends():
+
+    # get incoming *non-confirmed* friendship invites based on either ID _or_ email address
+    invites = list(FriendshipInvite.query.filter( \
+                     (FriendshipInvite.confirmed_at==None) & \
+                     ((FriendshipInvite.friendee_id==current_user.id) | \
+                      (FriendshipInvite.friendee_email==current_user.email))).all())
+
+    # make invites unique in case there are duplicate invites
+    unique_invites = []
+    inviter_tracker = {}
+    for i in invites:
+        if i.friender_id not in inviter_tracker:
+            unique_invites.append(i)
+        inviter_tracker[i.friender_id] = 1
+
+        # print [invite.friender_id for invite in unique_invites]
+
+    # TODO: if not using Form method, can remove below and FriendForm in models.py
+    #    form = FriendForm(request.form)
+    return jsonify(
+        friendships=[f.to_dict() for f in current_user.friendships],
+        invites=unique_invites
+    )
 
 @app.route('/_invite_friend', methods=['POST'])
 @login_required

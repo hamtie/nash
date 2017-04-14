@@ -1,3 +1,4 @@
+import json
 import cPickle as pickle
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from flask_user import UserMixin
@@ -5,9 +6,11 @@ from flask_user.forms import RegisterForm
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, validators
-from app.init_app import db, app
+from app.init_app import db, app, Model
 
-class Friendship(db.Model):
+
+
+class Friendship(Model):
     __tablename__ = 'friendships'
     id = db.Column(db.Integer(), primary_key=True)
     friender_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
@@ -16,7 +19,7 @@ class Friendship(db.Model):
                                back_populates="friendships")
     friendee = db.relationship("User", foreign_keys=[friendee_id],
                                back_populates="cofriendships")
-    
+
 class FriendshipInvite(db.Model):
     __tablename__ = 'friendship_invites'
     id = db.Column(db.Integer(), primary_key=True)
@@ -40,9 +43,9 @@ class FriendshipInvite(db.Model):
                                back_populates="cofriendship_invites")
 
     # if friendship is confirmed
-    confirmed_at = db.Column(db.DateTime(), nullable=True) 
+    confirmed_at = db.Column(db.DateTime(), nullable=True)
 
-    invited_at = db.Column(db.DateTime(), nullable=True) 
+    invited_at = db.Column(db.DateTime(), nullable=True)
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
 class User(db.Model, UserMixin):
@@ -74,15 +77,15 @@ class User(db.Model, UserMixin):
     cofriendship_invites = db.relationship('FriendshipInvite',
                                            foreign_keys=[FriendshipInvite.friendee_id])
 
- 
+
 # Define the Role data model
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(50), nullable=False, server_default=u'', unique=True)  # for @roles_accepted()
     label = db.Column(db.Unicode(255), server_default=u'')  # for display purposes
-    
-    
+
+
 class Graph(db.Model):
     __tablename__ = 'graphs'
     id = db.Column(db.Integer(), primary_key=True)
@@ -110,7 +113,7 @@ class GraphViewRevision(db.Model):
 
     graph_id = db.Column(db.Integer(), db.ForeignKey('graphs.id'))
     graph = db.relationship('Graph', foreign_keys=graph_id)
-    
+
     author_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
     author = db.relationship('User', foreign_keys=author_id)
 
@@ -118,7 +121,7 @@ class GraphViewRevision(db.Model):
     edges = db.Column(db.String(10 * 1000), nullable=False, server_default='')
 
     timestamp = db.Column(db.DateTime())
-        
+
 class GraphRevision(db.Model):
     __tablename__ = 'graph_revisions'
     id = db.Column(db.Integer(), primary_key=True)
@@ -135,7 +138,7 @@ class GraphRevision(db.Model):
 
     author_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
     author = db.relationship('User', foreign_keys=[author_id])
-    
+
     def string(self):
         nodes = pickle.loads(str(self.nodes))
         edges = pickle.loads(str(self.edges))
@@ -145,7 +148,7 @@ class GraphRevision(db.Model):
                         for node in nodes)
         rv += "\n".join('Edge detail: ' + str(edge['detailed']) for edge in edges)
         return rv
-    
+
 # Define the UserRoles association model
 class UsersRoles(db.Model):
     __tablename__ = 'users_roles'

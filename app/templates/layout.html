@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="nash">
     <head>
         <!-- These 3 meta tags MUST come first -->
         <meta charset="utf-8">
@@ -8,11 +8,11 @@
         <!-- These 3 meta tags MUST come first -->
 
         <title>Nash Reality Testing</title>
-
+        <base href="/" />
         <link rel="shortcut icon" href="{{ url_for('static', filename='images/nfavicon.png')
                                         }}">
-        
-        
+
+
         <!-- Bootstrap CSS and JS -->
         <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -22,17 +22,26 @@
             <script src="{{ url_for('static', filename='bootstrap/js/respond.min.js') }}"></script>
         <![endif]-->
 
-	<!-- JS -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script><!--	<script src="http://d3js.org/d3.v2.min.js"></script>-->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="{{ url_for('static', filename='js/d3-context-menu.js') }}"></script>
-        <!-- Application specific CSS-->
+        <!-- JS -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script><!--	<script src="http://d3js.org/d3.v2.min.js"></script>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+        <script src="{{ url_for('static', filename='js/d3-context-menu.js') }}"></script>
+
+        <!-- Application specific JS -->
+        <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/controllers/MainController.js') }}"></script>
+
+        <!-- Application specific CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/diff.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/d3-context-menu.css') }}">
     </head>
     <body>
         {% block body %}
+
         <!-- Application specific HTML -->
         <div id="header-div" class="clearfix">
           <div class="pull-left"><a href="{{ url_for('index') }}">
@@ -56,24 +65,24 @@
         </div>
         <hr class="no-margins"/>
 
-        <div id="main-div" class="with-margins">
-        {% block pre_content %}{% endblock %}
+        <div id="main-div" class="with-margins" ng-view>
+        <!-- {% block pre_content %}{% endblock %} -->
 
-        {# One-time system messages called Flash messages #}
-        {% block flash_messages %}
-            {%- with messages = get_flashed_messages(with_categories=true) -%}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        {% if category=='error' %}
-                            {% set category='danger' %}
-                        {% endif %}
-                        <div class="alert alert-dismissible alert-{{category}}">{{ message|safe }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>
-                    {% endfor %}
-                {% endif %}
-            {%- endwith %}
-        {% endblock %}
+        <!-- {# One-time system messages called Flash messages #} -->
+        <!-- {% block flash_messages %} -->
+        <!--     {%- with messages = get_flashed_messages(with_categories=true) -%} -->
+        <!--         {% if messages %} -->
+        <!--             {% for category, message in messages %} -->
+        <!--                 {% if category=='error' %} -->
+        <!--                     {% set category='danger' %} -->
+        <!--                 {% endif %} -->
+        <!--                 <div class="alert alert-dismissible alert-{{category}}">{{ message|safe }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div> -->
+        <!--             {% endfor %} -->
+        <!--         {% endif %} -->
+        <!--     {%- endwith %} -->
+        <!-- {% endblock %} -->
         <div id="messages"></div>
-                        
+
         {% block content %}{% endblock %}
 
         {% block post_content %}{% endblock %}

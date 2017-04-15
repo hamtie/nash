@@ -18,26 +18,23 @@
 
 <h1>Incoming Friend Requests</h1> <br>
 
-  <!-- {% for i in incoming_invites %} -->
-  <!--   <p><a href="{{ url_for('user_page', id=i.friender_id) }}"> -->
-  <!--     {% if i.friender.photo_file_name != '': %} -->
-  <!--       <img src="{{ url_for('static', filename='images/users/' + i.friender.photo_file_name) }}" /><br /> -->
-  <!--     {% endif %} -->
-  <!--     {{ i.friender.first_name }} {{ i.friender.last_name }}</a> &nbsp;&nbsp; <input type="submit" value="Confirm Request" onClick="confirm_friend({{ i.friender.id }})"><br/> -->
-  <!--   </p> -->
-  <!-- {% endfor %} -->
+<div ng-repeat="invite in friends.invites">
+  <pre> {{ invite | json }}
+</div>
 
 <h1>Friends</h1>
-{{ sayHello }}
-  <!-- {% for f in friendships %} -->
-  <!-- <p><a href="{{ url_for('user_page', id=f.friendee.id) }}"> -->
-  <!--     {% if f.friendee.photo_file_name != '': %} -->
-  <!--       <img src="{{ url_for('static', filename='images/users/' + f.friendee.photo_file_name) }}" /><br /> -->
-  <!--     {% endif %} -->
-  <!--     {{ f.friendee.first_name }} -->
-  <!--     {{ f.friendee.last_name }}</a> -->
-  <!-- </p> -->
-  <!-- {% endfor %} -->
+<div ng-repeat="f in friends.friendships">
+  <pre> {{ f | json }} </pre>
+  <p>
+    <a href="/user/{{f.friendee.id}}">
+      <img ng-if="f.friendee.photo_file_name" src="/static/images/users/{{f.friendee.photo_file_name}}" />
+      <br />
+      {{ f.friendee.first_name }}
+      {{ f.friendee.last_name }}
+    </a>
+  </p>
+
+</div>
 
 
 <!-- <script src="/static/js/nash.js?version=invite_friend_0.5"></script> -->

@@ -48,7 +48,7 @@ class FriendshipInvite(db.Model):
     invited_at = db.Column(db.DateTime(), nullable=True)
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
-class User(db.Model, UserMixin):
+class User(Model, db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
 

@@ -208,7 +208,7 @@ def save_graph():
                                                  graph_diff_url=graph_diff_url)
             mail.send(msg_to_helper)
 
-    return json.dump(result="success")
+    return jsonify(result="success")
 
 @app.route('/_share_graph', methods=['POST'])
 @login_required  # Limits access to authenticated users
